@@ -10,11 +10,21 @@ const Square=({value,onSquareClick})=>{
 
 export default function Board() {
   //state
-  const [squares,setSquare] =useState(Array(9).fill(null));
+  const [xIsNext,setxIsNext]= useState(true);
+  const [squares,setSquare] = useState(Array(9).fill(null));
   const handleClick=(i)=>{
+      //checking whether there is X or O
+      if(squares[i]){return;}
+      //making a copy of board array
       const nextsquare=squares.slice();
-      nextsquare[i]='X';
+      //Switching from X and O
+      if(xIsNext){
+        nextsquare[i]="X";
+      }else{
+        nextsquare[i]="O";
+      }
       setSquare(nextsquare);
+      setxIsNext(!xIsNext);
   }
   return(<>
           <div className="board-row">
