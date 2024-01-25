@@ -2,24 +2,14 @@ import {useState} from 'react';
 
 const Square=({value,onSquareClick})=>{
   
-  return (<button className="square" onClick={onSquareClick}>
+  return (
+  <button className="square" onClick={onSquareClick}>
             {value}
-          </button>)
+          </button>);
 }
 
 
-function Board() {
-  //state
-  const [xIsNext,setxIsNext]= useState(true);
-  const [squares,setSquare] = useState(Array(9).fill(null));
-  //winner
-  const winner=calcWinner(squares);
-  let status;
-  if(winner){
-    status="Winner:"+winner;
-  }else{
-    status="Next Player:"+(xIsNext?"X":"O");
-  }
+const Board=({ xIsNext, squares, onPlay })=>{
   const handleClick=(i)=>{
       //checking whether there is X or O
       //if there is occupied it will early return of handleClick
@@ -35,12 +25,18 @@ function Board() {
         nextsquare[i]="O";
       }
       //fills the square
-      setSquare(nextsquare);
-      //filps the turns of X and O
-      setxIsNext(!xIsNext);
+      onPlay(nextsquare);
   }
+   //winner
+   const winner=calcWinner(squares);
+   let status;
+   if(winner){
+     status="Winner:"+winner;
+   }else{
+     status="Next Player:"+(xIsNext?"X":"O");
+   }
   return(
-        <>
+        <div>
           <div className='status'>{status}</div>
           <div className="board-row">
             <Square value={squares[0]} onSquareClick={()=>handleClick(0)}/>
@@ -57,7 +53,26 @@ function Board() {
             <Square value={squares[7]} onSquareClick={()=>handleClick(7)}/>
             <Square value={squares[8]} onSquareClick={()=>handleClick(8)}/>
           </div>
-        </>)
+        </div>);
+}
+export default function Game(){
+  const [xIsNext,setxIsNext]=useState(true);
+  const [history,setHistory]=useState([Array(9).fill(null)]);
+  const currentSquares=history[history.length-1];
+  const handlePlay=(nextSquares)=>{
+      setHistory([...history,nextSquares]);
+      setxIsNext(!xIsNext);
+    }
+  return(
+    <div className='game'>
+      <div className='game-board'>
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay}/>
+      </div>
+      <div className='game-info'>
+        <ol>{/*To-Do */}</ol>
+      </div>
+    </div>
+  );
 }
 
 function calcWinner(squares){
@@ -79,17 +94,6 @@ function calcWinner(squares){
   }
   return null;
 }
-export default function Game(){
-  return(
-    <div className='game'>
-      <div className='game-board'>
-        <Board/>
-      </div>
-      <div className='game-info'>
-        <ol>{/*To-Do */}</ol>
-      </div>
-    </div>
-  );
-}
+
 
 
